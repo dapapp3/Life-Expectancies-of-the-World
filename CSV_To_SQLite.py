@@ -3,7 +3,7 @@ import csv
 import sqlite3
  
 # Connecting to the geeks database
-connection = sqlite3.connect('Life_Expectancy.db')
+connection = sqlite3.connect('Life_Expectancy.sqlite')
  
 # Creating a cursor object to execute SQL queries on a database table
 cursor = connection.cursor()
