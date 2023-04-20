@@ -23,9 +23,11 @@ function init() {
 
       // Create default/starter charts
       update_country_info();
+      update_line_chart();
       update_bar_chart();
       update_gauge_chart();
-    //   update_bubble_chart(country);
+      update_country_mortality();
+      update_average_mortality_chart();
   });
 };
 
@@ -48,7 +50,68 @@ function update_country_info() {
           }
       }
   });
-}
+};
+
+function update_line_chart() {
+  // Find Data For Chosen Country
+  let Country_Name = d3.select("#selCountry").property("value");
+
+  d3.json(Base_url + Country_Name).then(function(data) {
+    // Create an empty array for the x-axis (years) and for the y-axis (life expectancy)
+    var years = [];
+    var LifeExp = new Map();
+
+    // Loop through each object in the data array and extract the year and life expectancy
+    data.forEach(function(d) {
+      years.push(d.Year);
+      LifeExp.set(d.Year, d.Life_Expectancy);
+    });
+
+    // Sort the years array based on the year values
+    years.sort(function(a, b) {
+      return a - b;
+    });
+    
+    // Sort the LifeExp array based on the corresponding year value
+    var sortedLifeExp = years.map(function(year) {
+      return LifeExp.get(year);
+    });
+
+    // Destroy the existing chart, if one exists
+    var chartElement = document.getElementById('LifeExp_ChartJS');
+    var existingChart = Chart.getChart(chartElement);
+    if (existingChart) {
+      existingChart.destroy();
+    }
+
+    // Create a Chart.js line chart
+    var chart = new Chart('LifeExp_ChartJS', {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [{
+          label: 'Life Expectancy by Year',
+          data: sortedLifeExp,
+          borderColor: 'rgb(255, 99, 132)',
+          fill: false
+        }]
+      },
+      options: {
+        title: {
+          display: true,
+          text: 'Life Expectancy by Year'
+        },
+        plugins: {
+          datalabels: {
+            display: true,
+            align: 'end',
+            color: 'rgb(255, 99, 132)'
+          }
+        }
+      }
+    });
+  });
+};
 
 // Function to create/update the bar chart
 function update_bar_chart() {
@@ -78,7 +141,7 @@ function update_bar_chart() {
       type: 'bar'
     };
     var layout = {
-      title: 'Population by Year'
+      title: 'Population (in millions) by Year'
     };
     Plotly.newPlot('bar', [trace], layout);
   });
@@ -123,12 +186,136 @@ function update_gauge_chart() {
   });
 };
 
+// Make the Single-Country Mortality Chart
+function update_country_mortality() {
+  // Find Data For Chosen Country
+  let Country_Name = d3.select("#selCountry").property("value");
+
+  d3.json(Base_url + Country_Name).then(function(data) {
+  var years = [];
+  var infantDeaths = [];
+  var fiveYearDeaths = [];
+  var adultMortality = [];
+
+  // Sort Data
+  sorted_data = data.sort((a, b) => a.Year - b.Year);
+
+  // Loop through each object in the data array and extract the year and population
+  sorted_data.forEach(function(d) {
+    years.push(d.Year);
+    infantDeaths.push(d.Infant_Deaths);
+    fiveYearDeaths.push(d.Under_Five_Deaths);
+    adultMortality.push(d.Adult_Deaths);
+  });
+
+  var trace3 = {
+    x: years,
+    y: infantDeaths,
+    mode: 'lines+markers',
+    name: 'Infant Deaths'
+  };
+  
+  var trace2 = {
+    x: years,
+    y: fiveYearDeaths,
+    mode: 'lines+markers',
+    name: 'Five Year Deaths'
+  };
+  
+  var trace1 = {
+    x: years,
+    y: adultMortality,
+    mode: 'lines+markers',
+    name: 'Adult Mortality'
+  };
+  
+  var trace_data = [ trace1, trace2, trace3 ];
+  
+  var linelayout = {
+    title:'Selected Country Mortality',
+    xaxis: {
+      title: 'Year',
+      showgrid: false,
+      zeroline: false
+    },
+    yaxis: {
+      title: 'Deaths per 1000',
+      showline: false
+    }
+  };
+  
+  Plotly.newPlot('line', trace_data, linelayout);
+  });
+};
+
+// Make the AVG Mortality Chart
+function update_average_mortality_chart() {
+  // Find Data For Chosen Country
+  let Country_Name = d3.select("#selCountry").property("value");
+
+  d3.json(Base_url + "avg_mortality").then(function(data) {
+    // Create an empty array for the x-axis (years) and for the y-axis (population)
+    var years = [];
+    var infantDeaths = [];
+    var fiveYearDeaths = [];
+    var adultMortality = [];
+    sorted_data = data.sort((a, b) => a.Year - b.Year)
+    // Loop through each object in the data array and extract the year and population
+    sorted_data.forEach(function(d) {
+      years.push(d.Year);
+      infantDeaths.push(d.Infant_Deaths);
+      fiveYearDeaths.push(d.Under_Five_Deaths);
+      adultMortality.push(d.Adult_Deaths);
+    });
+
+    var trace3 = {
+      x: years,
+      y: infantDeaths,
+      mode: 'lines+markers',
+      name: 'Infant Deaths'
+    };
+    
+    var trace2 = {
+      x: years,
+      y: fiveYearDeaths,
+      mode: 'lines+markers',
+      name: 'Five Year Deaths'
+    };
+    
+    var trace1 = {
+      x: years,
+      y: adultMortality,
+      mode: 'lines+markers',
+      name: 'Adult Mortality'
+    };
+    
+    var trace_data = [ trace1, trace2, trace3 ];
+    
+    var linelayout = {
+      title:'Average Mortality',
+      xaxis: {
+        title: 'Year',
+        showgrid: false,
+        zeroline: false
+      },
+      yaxis: {
+        title: 'Deaths per 1000',
+        showline: false
+      }
+    };
+    
+    Plotly.newPlot('line2', trace_data, linelayout);
+  });
+};
+
 // Update plots when an option is changed
 function option_changed() {
     update_country_info();
+    update_line_chart();
     update_bar_chart();
     update_gauge_chart();
-    // update_bubble_chart(selectedValue);
+    update_country_mortality();
+    update_average_mortality_chart();
 };
 
 // Call init function on page load
