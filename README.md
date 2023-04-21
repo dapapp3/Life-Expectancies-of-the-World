@@ -9,7 +9,7 @@ In addition to 5 charts the dashboard contains (described later) a handy summary
 3) Alcohol Consumption
 4) BMI
 
-The dashboard contains a line chart detailing the life expectancy for the selected country each year between 2000 and 2015, a bar chart detailing the population growth (or decline) over the same time frame, a gauge chart detailing the percentile that the selected country's average life expectancy during the time frame examined falls into relative to the rest of the countries in the data set, and two morality multi-line charts detailing the selected country's mortality rates for infants, children age 5 and under, and adults compared to the mortality rates for those same sub-groups for all countries in the data set.
+The dashboard contains a line chart detailing the life expectancy for the selected country each year between 2000 and 2015, a bar chart detailing the population growth (or decline) over the same time frame, a gauge chart detailing the percentile that the selected country's average life expectancy during the time frame examined falls into relative to the rest of the countries in the data set, and two mortality multi-line charts detailing the selected country's mortality rates for infants, children age 5 and under, and adults compared to the mortality rates for those same sub-groups for all countries in the data set.
 
 The original data set used to populate the database and power the visualizations can be found in the root directory of this repository in the form of a CSV file entitled "Life-Expectancy-Data-Updated.csv"
 
