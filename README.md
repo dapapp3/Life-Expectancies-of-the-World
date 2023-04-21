@@ -18,3 +18,8 @@ The code used to convert the original data set used to a SQLite database can be 
 The code used to build the Flask API can be found in the form of the "app.py" file located in the root folder of this repository.
 
 The code used to create and update the dashboard visualizations can be found in the form of the "app.js" located in the static/js folder of this repository and "index.html" files located in the root folder of this repository.
+
+
+Sources:
+
+Kaggle, plotly, chart.js, module 14 challenge, TA's and class instructor. 
